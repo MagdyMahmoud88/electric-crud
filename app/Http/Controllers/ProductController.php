@@ -32,38 +32,42 @@ class ProductController extends Controller
     {
         $data = $request->validated();
         Product::create($data);
-        return redirect()->route('products.index')->with('success', 'Product created successfully.');
+        return redirect()->route('products.index')->with('success', 'تم إنشاء المنتج بنجاح');
     }
 
 
-    public function show(string $id) {}
-
-    /**
-     * Display the specified resource.
-     */
-
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function show(Product $product)
     {
-        //
+        return view('products.show', [
+            'product' => $product
+        ]);
+    }
+
+
+
+
+    public function edit(Product $product)
+    {
+
+        return view('products.edit', compact('product'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(ProductRequest $request, Product $product)
     {
-        //
+        $data = $request->validated();
+        $product->update($data);
+        return redirect()->route('products.index')->with('success', 'تم تحديث المنتج بنجاح');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return redirect()->route('products.index')->with('success', 'تم حذف المنتج بنجاح');
     }
 }
