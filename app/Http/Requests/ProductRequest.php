@@ -24,8 +24,9 @@ class ProductRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
+            'category_id' => 'nullable|exists:categories,id',
+            'description' => 'nullable|string|required',
+            'price' => 'required|numeric|min:10',
         ];
     }
     public function messages(): array
@@ -35,6 +36,7 @@ class ProductRequest extends FormRequest
             'name.string' => 'أسم المنتج يجب أن يكون نصاً',
             'name.max' => 'أسم المنتج لا يمكن أن يتجاوز 255 حرف.',
             'description.string' => 'وصف المنتج يجب أن يكون نصاً',
+            'description.required' => 'وصف المنتج مطلوب',
             'price.required' => 'سعر المنتج مطلوب',
             'price.numeric' => 'سعر المنتج يجب أن يكون عدداً',
             'price.min' => 'سعر المنتج يجب أن يكون أكبر من 0',
