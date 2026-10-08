@@ -24,19 +24,21 @@ class ProductRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'category_id' => 'nullable|exists:categories,id',
-            'description' => 'nullable|string|required',
+            'category_id' => 'required|exists:categories,id',
+            'description' => 'nullable|string',
             'price' => 'required|numeric|min:10',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+
         ];
     }
     public function messages(): array
     {
         return [
             'name.required' => 'أسم المنتج مطلوب',
+            'category_id.required' => 'قسم المنتج مطلوب',
             'name.string' => 'أسم المنتج يجب أن يكون نصاً',
             'name.max' => 'أسم المنتج لا يمكن أن يتجاوز 255 حرف.',
             'description.string' => 'وصف المنتج يجب أن يكون نصاً',
-            'description.required' => 'وصف المنتج مطلوب',
             'price.required' => 'سعر المنتج مطلوب',
             'price.numeric' => 'سعر المنتج يجب أن يكون عدداً',
             'price.min' => 'سعر المنتج يجب أن يكون أكبر من 0',

@@ -2,27 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Http\Requests\ProductRequest;
+use App\Models\Category;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::latest()->get();
-        return view('products.index', compact('products'));
+        $products = Product::inCategory($request->query('category'))
+            ->search($request->query('search'))
+            ->latest()->paginate(6);
+        $categories = Category::all();
+        return view('products.index', compact('products', 'categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('products.create');
+        $categories = Category::all();
+        return view(
+            'products.create',
+            [
+                'categories' => $categories
+            ]
+        );
     }
 
     /**
@@ -30,7 +38,11 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request)
     {
+
         $data = $request->validated();
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('products', 'public');
+        }
         Product::create($data);
         return redirect()->route('products.index')->with('success', 'تم إنشاء المنتج بنجاح');
     }
@@ -48,16 +60,21 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
+        $categories = Category::all();
 
-        return view('products.edit', compact('product'));
+        return view('products.edit', compact('product', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(ProductRequest $request, Product $product)
     {
         $data = $request->validated();
+        if ($request->hasFile('image')) {
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
+            $data['image'] = $request->file('image')->store('products', 'public');
+        }
         $product->update($data);
         return redirect()->route('products.index')->with('success', 'تم تحديث المنتج بنجاح');
     }
@@ -67,6 +84,9 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
         $product->delete();
         return redirect()->route('products.index')->with('success', 'تم حذف المنتج بنجاح');
     }

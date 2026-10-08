@@ -30,7 +30,23 @@
                 <x-error name="price" />
 
             </div>
-            <button class="bg-blue-500 text-white p-2 rounded-2xl mx-auto text-center " type="submit">update</button>
+            <div class="mb-4">
+                <label for="category_id" class="block text-gray-700 font-semibold mb-2">القسم</label>
+                <select name="category_id" id="category_id"
+                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ">
+                    <option value="">بدون قسم</option>
+                    @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ?
+                        'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                    @endforeach
+                </select>
+                <x-error name="category_id" />
+            </div>
+            <div class="mb-4">
+                <button class="bg-blue-500 text-white p-2 rounded-2xl mx-auto text-center "
+                    type="submit">update</button>
         </form>
 
     </div>

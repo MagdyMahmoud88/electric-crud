@@ -11,11 +11,24 @@ class Product extends Model
         'name',
         'description',
         'price',
-        'category_id'
+        'category_id',
+        'image'
     ];
 
     public function category(): BelongsTo
     {
         return  $this->belongsTo(Category::class);
+    }
+
+
+    public function scopeInCategory($query, $categoryId)
+    {
+        return $query->when($categoryId, fn($q) => $q->where('category_id', $categoryId));
+    }
+
+
+    public function scopeSearch($query, $searchTerm)
+    {
+        return $query->when($searchTerm, fn($q) => $q->where('name', 'like', "%{$searchTerm}%"));
     }
 }
