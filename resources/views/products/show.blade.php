@@ -6,9 +6,9 @@
             <h1 class="text-2xl font-bold text-gray-800 mb-2">{{ $product->name }}</h1>
             @if ($product->image)
             <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}"
-                class="w-full h-64 object-cover rounded-lg mb-4">
+                class="w-full h-64 object-contain rounded-lg mb-4">
             @else
-            <div class="w-full/2 h-40 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+            <div class="w-full h-40 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
                 <svg class="w-12 h-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                     stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round"
