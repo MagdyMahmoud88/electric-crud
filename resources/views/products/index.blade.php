@@ -4,11 +4,13 @@
 
         <!-- أزرار التصنيفات -->
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
-            <a href="{{ route('products.index') }}"
-                class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition">الكل</a>
+            <a href="{{ route('products.index', ['search' => request('search')]) }}"
+                class="px-3 py-1.5 rounded-lg transition {{ request('category') ? 'bg-gray-100 hover:bg-gray-200' : 'bg-blue-600 text-white' }}">
+                الكل
+            </a>
             @foreach ($categories as $category)
-            <a href="{{ route('products.index', ['category' => $category->id]) }}"
-                class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+            <a href="{{ route('products.index', ['category' => $category->id, 'search' => request('search')]) }}"
+                class="px-3 py-1.5 rounded-lg transition {{ request('category') == $category->id ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200' }}">
                 {{ $category->name }}
             </a>
             @endforeach
@@ -37,7 +39,7 @@
 
         <!-- شبكة المنتجات -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            @forelse ( $products as $product )
+            @forelse ($products as $product)
             <!-- الكارد الرئيسي الموحد -->
             <div
                 class="border rounded-xl bg-white shadow-sm hover:shadow-md transition flex flex-col overflow-hidden h-full">
@@ -63,7 +65,7 @@
                             class="font-bold text-xl text-gray-800 group-hover:text-blue-600 transition line-clamp-2 h-14">
                             {{ $product->name }}
                         </h2>
-                        <p class="text-sm text-gray-500 mt-1">{{ $product->category?->name }}</p>
+                        <p class="text-sm text-gray-500 mt-1 h-5">{{ $product->category?->name }}</p>
 
                         <p class="text-gray-600 mt-2 text-sm leading-relaxed line-clamp-2 h-14">
                             {{ $product->description }}

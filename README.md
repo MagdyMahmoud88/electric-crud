@@ -1,58 +1,111 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Electric Shop — Product Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A product and service management app for an electrical shop, built with **Laravel**. Products are organized by category, can have images, and are displayed in a responsive card grid with search, category filtering, and pagination. The interface is in Arabic (RTL).
 
-## About Laravel
+<!--
+Add screenshots, then uncomment this block:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Screenshots
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Products list | Edit product |
+|---|---|
+| ![Products list](docs/screenshots/products-list.png) | ![Edit product](docs/screenshots/edit-product.png) |
+-->
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+- **Full CRUD** for products: create, list, view, edit, delete
+- **Categories** with a one-to-many relationship (a category has many products)
+- **Image upload** for products. The old image is deleted when replaced or when the product is removed, and a placeholder is shown when there is no image
+- **Search** by product name and **filter** by category. Both work together and are preserved across pages
+- **Pagination** (6 products per page)
+- **Server-side validation** using Form Requests, with custom Arabic error messages
+- **Reusable Blade components** for the layout and validation errors
+- **Responsive UI** built with Tailwind CSS
+- Flash messages that auto-hide (Alpine.js)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Built With
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| | |
+|---|---|
+| Framework | Laravel 13 |
+| Language | PHP 8.5 |
+| Database | MySQL |
+| Styling | Tailwind CSS |
+| JavaScript | Alpine.js (flash messages only) |
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Getting Started
 
-## Agentic Development
+### Requirements
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- PHP and Composer
+- MySQL
+
+### Installation
 
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/MagdyMahmoud88/electric-crud.git
+cd electric-crud
 
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Create an empty MySQL database named `electric_crud`, then set your credentials in `.env`:
 
-## Contributing
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=electric_crud
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Run the migrations, seed the categories, link the storage folder (needed to display uploaded images), and start the server:
 
-## Code of Conduct
+```bash
+php artisan migrate
+php artisan db:seed --class=CategorySeeder
+php artisan storage:link
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Open <http://127.0.0.1:8000/products>.
 
-## Security Vulnerabilities
+## Project Structure
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Path | Purpose |
+|---|---|
+| `app/Http/Controllers/ProductController.php` | Resource controller for products |
+| `app/Http/Requests/ProductRequest.php` | Validation rules and Arabic messages |
+| `app/Models/Product.php` | Model with the `inCategory` and `search` query scopes |
+| `app/Models/Category.php` | Category model (`hasMany` products) |
+| `resources/views/products/` | Index, create, edit, and show views |
+| `resources/views/components/` | Layout and error components |
 
-## License
+## How Search and Filtering Work
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Filtering is implemented with Eloquent **query scopes** in the `Product` model. Each scope uses `when()`, so an empty filter leaves the query untouched:
+
+```php
+Product::with('category')
+    ->inCategory($request->query('category'))
+    ->search($request->query('search'))
+    ->latest()
+    ->paginate(6);
+```
+
+`with('category')` eager loads the relationship to avoid the N+1 query problem, and `appends(request()->query())` keeps the active filters in the pagination links.
+
+## Current Limitations and Next Steps
+
+- [ ] **No authentication yet.** Anyone with the URL can add, edit, or delete products, so do not deploy this publicly as it is
+- [ ] Automated tests (Pest)
+- [ ] Manage categories from the UI instead of seeding them
+- [ ] Deploy a live demo
+
+## Author
+
+Built by [MagdyMahmoud88](https://github.com/MagdyMahmoud88).
