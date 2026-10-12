@@ -108,4 +108,4 @@ Product::with('category')
 
 ## Author
 
-Built by [MagdyMahmoud88](https://github.com/MagdyMahmoud88).
+Built by [MagdyMahmoud88](https://github.com/MagdyMahmoud88)
