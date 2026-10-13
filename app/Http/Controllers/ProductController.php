@@ -15,7 +15,8 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::inCategory($request->query('category'))
+        $products = Product::with('category')
+            ->inCategory($request->query('category'))
             ->search($request->query('search'))
             ->latest()->paginate(6);
         $categories = Category::all();
