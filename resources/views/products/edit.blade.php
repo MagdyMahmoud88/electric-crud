@@ -2,7 +2,8 @@
     <div class="max-w-xl mx-auto my-8 p-6 bg-white border rounded-xl shadow-md">
         <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">تعديل المنتج</h1>
 
-        <form action="{{ route('products.update' , $product->id) }}" method="post">
+        <form action="{{ route('products.update' , $product->id) }}" method="post" enctype="multipart/form-data"
+            class="space-y-4">
             @csrf
             @method('put')
             <!-- اسم المنتج -->
@@ -17,16 +18,14 @@
             <div class="mb-4">
                 <label for="description" class="block text-gray-700 font-semibold mb-2">الوصف</label>
                 <textarea name="description" id="description" rows="4"
-                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ">
-                    {{ old('description', $product->description) }}</textarea>
+                    class="w-full">{{ old('description', $product->description) }}</textarea>
                 <x-error name="description" />
 
             </div>
 
             <div class="mb-4">
                 <label for="price" class="block text-gray-700 font-semibold mb-2"> السعر</label>
-                <input type="text" name="price" id="price" value="{{ old('price', $product->price) }}"
-                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ">
+                <input type="text" name="price" id="price" value="{{ old('price', $product->price) }}"class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ">
                 <x-error name="price" />
 
             </div>
@@ -43,6 +42,18 @@
                     @endforeach
                 </select>
                 <x-error name="category_id" />
+            </div>
+            <div class="mb-4">
+                <label for="image" class="block text-gray-700 font-semibold mb-2">صورة المنتج</label>
+
+                @if ($product->image)
+                <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}"
+                    class="w-32 h-32 object-contain bg-white border rounded-lg p-2 mb-3">
+                @endif
+
+                <input type="file" name="image" id="image" class="w-full px-4 py-2 border rounded-lg">
+                <p class="text-sm text-gray-500 mt-1">اتركه فارغاً للإبقاء على الصورة الحالية</p>
+                <x-error name="image" />
             </div>
             <div class="mb-4">
                 <button class="bg-blue-500 text-white p-2 rounded-2xl mx-auto text-center "
