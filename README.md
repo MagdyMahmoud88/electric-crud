@@ -3,7 +3,6 @@
 A product and service management app for an electrical shop, built with **Laravel**. Products are organized by category, can have images, and are displayed in a responsive card grid with search, category filtering, and pagination. The interface is in Arabic (RTL).
 
 
-Add screenshots, then uncomment this block:
 
 ## Screenshots
 
