@@ -41,7 +41,7 @@ class ProductRequest extends FormRequest
             'description.string' => 'وصف المنتج يجب أن يكون نصاً',
             'price.required' => 'سعر المنتج مطلوب',
             'price.numeric' => 'سعر المنتج يجب أن يكون عدداً',
-            'price.min' => 'سعر المنتج يجب أن يكون أكبر من 0',
+            'price.min' => 'سعر المنتج يجب أن يكون أكبر من 10',
         ];
     }
 }
